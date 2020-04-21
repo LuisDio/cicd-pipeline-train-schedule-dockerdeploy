@@ -8,5 +8,11 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
+        stage('Build docker image') {
+            steps {
+                sh 'docker built -t lu23/trainSchedule .'
+                sh 'docker images'
+            }
+        }
     }
 }
