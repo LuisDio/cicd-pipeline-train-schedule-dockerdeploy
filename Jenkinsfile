@@ -8,15 +8,14 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
-        stage('Build Docker image') {
+        stage('Build Docker Image') {
             when {
                 branch 'master'
             }
-            script {
-                steps {
-                    image = docker.build("lu23/train-schedule")
-
-                    image.inside {
+            steps {
+                script {
+                    app = docker.build("lu23/train-schedule")
+                    app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
                 }
@@ -26,22 +25,13 @@ pipeline {
             when {
                 branch 'master'
             }
-            script {    
-                docker.withRegistry('https://registry.hub.docker.com', 'DockerHub') {
-                    image.push("${env.BUILD_NUMBER}")
-                    image.push("latest")
-                }
-            }
-            
-        }
-        stage('Deploy to production') {
-            when {
-                branch 'master'
-            }
-
             steps {
-                input 'Deploy to production'
-                milestone(1)
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'DockerHub') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
             }
         }
     }
