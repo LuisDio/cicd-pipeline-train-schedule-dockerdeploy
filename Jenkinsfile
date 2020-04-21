@@ -13,7 +13,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh 'docker build -t lu23/trainSchedule .'
+                sh 'docker build -t lu23/trainschedule .'
                 sh 'docker images'
             }
         }
